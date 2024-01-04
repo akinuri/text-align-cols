@@ -12,32 +12,38 @@
 
 <div class="w-fit mx-auto flex flex-col gap-4 p-4">
     
-    <div class="flex gap-8 items-center justify-center">
+    <div class="flex gap-8 items-start justify-center">
         
-        <div class="flex gap-4 items-center justify-center">
-            <div class="flex gap-2 items-center">
-                <span>Seperator :</span>
-                <input
-                    type="text"
-                    class="px-2 py-1 border rounded w-24"
-                    id="col-seperator-input"
-                    placeholder="sth"
-                    >
+        <div class="flex gap-4">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-2 items-start">
+                    <span>Seperator :</span>
+                    <input
+                        type="text"
+                        class="px-1 border rounded w-24"
+                        id="col-seperator-input"
+                        placeholder="sth"
+                        >
+                </div>
+                <label class="flex gap-2 items-center cursor-pointer">
+                    <input type="checkbox" id="ignore-quoted" class="cursor-pointer">
+                    <span>Ignore quoted strings</span>
+                </label>
             </div>
-            <div class="flex gap-2 items-center">
+            <div class="flex gap-2 items-start">
                 <span>Suffix :</span>
                 <input
                     type="text"
-                    class="px-2 py-1 border rounded w-24"
+                    class="px-1 border rounded w-24"
                     id="col-suffix-input"
                     placeholder="sth"
                     >
             </div>
-            <div class="flex gap-2 items-center">
+            <div class="flex gap-2 items-start">
                 <span>Joiner :</span>
                 <input
                     type="text"
-                    class="px-2 py-1 border rounded w-24"
+                    class="px-1 border rounded w-24"
                     id="col-joiner-input"
                     placeholder="sth"
                     >
@@ -81,6 +87,7 @@
 
 <script>
     let colSeperatorBox = qs("#col-seperator-input");
+    let ignoreQuotedCheck = qs("#ignore-quoted");
     let colSuffixBox    = qs("#col-suffix-input");
     let colJoinerBox    = qs("#col-joiner-input");
     let textBox         = qs("#text-box");
@@ -128,6 +135,12 @@
         let text = textBox.value.trim();
         let lines = text.split(/\r?\n/);
         lines = lines.map(line => line.trim());
+        if (ignoreQuotedCheck.checked) {
+            seperator = new RegExp(
+                // TODO: also parameterize the enclosers?
+                `${seperator}(?=(?:(?:[^'"\`]*['"\`]){2})*[^'"\`}]*$)`
+            );
+        }
         lines = lines.map(line => line.split(seperator));
         
         if (suffix) {
